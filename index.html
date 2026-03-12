@@ -1,788 +1,343 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>KCCD Annual Unit Review</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: #f1f5f9; color: #1e293b; min-height: 100vh; }
-  :root {
-    --indigo: #4f46e5; --indigo-dark: #3730a3; --indigo-light: #eef2ff;
-    --emerald: #059669; --emerald-light: #ecfdf5;
-    --amber: #d97706; --amber-light: #fffbeb;
-    --slate: #64748b; --slate-light: #f8fafc;
-    --red: #dc2626; --red-light: #fef2f2;
-    --border: #e2e8f0; --white: #ffffff;
-  }
-  .app { min-height: 100vh; display: flex; flex-direction: column; }
-
-  /* Top bar */
-  .topbar {
-    background: var(--white); border-bottom: 1px solid var(--border);
-    padding: 12px 24px; display: flex; align-items: center;
-    justify-content: space-between; position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  }
-  .topbar-brand { display: flex; align-items: center; gap: 10px; }
-  .topbar-brand .badge {
-    background: var(--indigo); color: white; font-size: 10px;
-    font-weight: 700; letter-spacing: .1em; padding: 3px 8px; border-radius: 6px;
-  }
-  .topbar-brand .label { font-size: 13px; color: var(--slate); font-weight: 500; }
-  .nav-dots { display: flex; align-items: center; gap: 6px; }
-  .nav-dot {
-    width: 10px; height: 10px; border-radius: 50%; border: none;
-    cursor: pointer; transition: all .2s; background: var(--border);
-  }
-  .nav-dot.active { background: var(--indigo); transform: scale(1.35); }
-  .nav-dot.done { background: #a5b4fc; }
-  .step-counter { font-size: 12px; color: var(--slate); }
-
-  /* Main */
-  .main { flex: 1; display: flex; justify-content: center; padding: 32px 16px; }
-  .card-wrap { width: 100%; max-width: 680px; }
-  .step-label {
-    font-size: 11px; text-transform: uppercase; letter-spacing: .1em;
-    color: var(--slate); margin-bottom: 12px; display: flex; align-items: center; gap-8px;
-  }
-  .card {
-    background: var(--white); border-radius: 20px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.07); border: 1px solid var(--border);
-    padding: 36px;
-  }
-
-  /* Section header */
-  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid var(--slate-light); }
-  .section-num {
-    width: 36px; height: 36px; border-radius: 10px; background: var(--indigo);
-    color: white; display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 14px; flex-shrink: 0;
-  }
-  .section-title { font-size: 17px; font-weight: 700; color: #0f172a; }
-  .section-badge {
-    font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px;
-    background: var(--indigo-light); color: var(--indigo); border: 1px solid #c7d2fe;
-    margin-top: 2px; display: inline-block;
-  }
-
-  /* Cover hero */
-  .hero {
-    background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%);
-    border-radius: 16px; padding: 32px; color: white; margin-bottom: 28px;
-  }
-  .hero-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .15em; color: #a5b4fc; text-transform: uppercase; margin-bottom: 6px; }
-  .hero h1 { font-family: 'DM Serif Display', serif; font-size: 30px; margin-bottom: 4px; }
-  .hero p { font-size: 13px; color: #c7d2fe; margin-bottom: 16px; }
-  .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-  .hero-tag {
-    font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
-    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: white;
-  }
-
-  /* Fields */
-  .field { margin-bottom: 20px; }
-  .field label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 4px; }
-  .field .hint { font-size: 11px; color: #94a3b8; margin-bottom: 6px; }
-  .field .req { color: var(--red); }
-  input[type=text], input[type=number], input[type=date], select, textarea {
-    width: 100%; border: 1.5px solid var(--border); border-radius: 10px;
-    padding: 9px 12px; font-size: 13px; font-family: 'DM Sans', sans-serif;
-    color: #1e293b; background: white; outline: none; transition: border .2s, box-shadow .2s;
-  }
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--indigo); box-shadow: 0 0 0 3px rgba(79,70,229,.12);
-  }
-  textarea { resize: vertical; }
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-  /* Checkboxes */
-  .check-grid { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px; background: var(--slate-light); border-radius: 12px; border: 1.5px solid var(--border); }
-  .check-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #334155; cursor: pointer; }
-  .check-item input { accent-color: var(--indigo); width: 14px; height: 14px; }
-
-  /* Dynamic rows */
-  .dyn-label { font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px; }
-  .dyn-hint { font-size: 11px; color: #94a3b8; margin-bottom: 10px; }
-  .dyn-rows { display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
-  .dyn-row {
-    background: var(--slate-light); border: 1.5px solid var(--border);
-    border-radius: 14px; padding: 16px; position: relative;
-  }
-  .dyn-row-fields { display: flex; flex-direction: column; gap: 10px; padding-right: 28px; }
-  .dyn-field-label { font-size: 11px; font-weight: 600; color: #64748b; display: block; margin-bottom: 4px; }
-  .dyn-remove {
-    position: absolute; top: 12px; right: 12px; background: none; border: none;
-    color: #cbd5e1; font-size: 18px; cursor: pointer; line-height: 1; padding: 0;
-    transition: color .2s;
-  }
-  .dyn-remove:hover { color: var(--red); }
-  .add-btn {
-    background: none; border: none; color: var(--indigo); font-size: 13px;
-    font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px;
-    padding: 4px 0; font-family: 'DM Sans', sans-serif;
-  }
-  .add-btn:hover { color: var(--indigo-dark); }
-
-  /* Callouts */
-  .callout { padding: 12px 16px; border-radius: 12px; font-size: 12px; margin-bottom: 16px; }
-  .callout.blue { background: var(--indigo-light); border: 1px solid #c7d2fe; color: #3730a3; }
-  .callout.amber { background: var(--amber-light); border: 1px solid #fde68a; color: #92400e; }
-  .callout.red { background: var(--red-light); border: 1px solid #fecaca; color: #991b1b; }
-  .callout.green { background: var(--emerald-light); border: 1px solid #a7f3d0; color: #065f46; }
-  .callout strong { font-weight: 700; }
-
-  /* Review */
-  .review-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--slate-light); }
-  .review-key { font-size: 12px; font-weight: 600; color: var(--slate); }
-  .review-val { font-size: 13px; color: #1e293b; text-align: right; max-width: 300px; }
-  .review-empty { color: #cbd5e1; font-style: italic; }
-
-  /* Nav buttons */
-  .nav-bar { display: flex; justify-content: space-between; margin-top: 24px; }
-  .btn {
-    padding: 10px 22px; border-radius: 12px; font-size: 13px; font-weight: 700;
-    cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; transition: all .2s;
-  }
-  .btn-back { background: white; border: 1.5px solid var(--border); color: #475569; }
-  .btn-back:hover { background: var(--slate-light); }
-  .btn-back:disabled { opacity: .3; cursor: not-allowed; }
-  .btn-next { background: var(--indigo); color: white; }
-  .btn-next:hover { background: var(--indigo-dark); }
-  .btn-submit { background: var(--emerald); color: white; }
-  .btn-submit:hover { background: #047857; }
-  .btn-submit:disabled, .btn-next:disabled { opacity: .4; cursor: not-allowed; }
-
-  /* Success */
-  .success-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--slate-light); }
-  .success-card { background: white; border-radius: 24px; box-shadow: 0 8px 40px rgba(0,0,0,.1); padding: 48px; max-width: 480px; width: 100%; text-align: center; }
-  .success-icon { width: 72px; height: 72px; background: var(--emerald-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 32px; }
-  .success-card h1 { font-family: 'DM Serif Display', serif; font-size: 26px; margin-bottom: 6px; }
-  .success-card p { font-size: 13px; color: var(--slate); margin-bottom: 4px; }
-  .success-next { margin-top: 24px; padding: 16px; background: var(--slate-light); border-radius: 14px; text-align: left; }
-  .success-next p { font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 8px; }
-  .success-next ul { list-style: none; padding: 0; }
-  .success-next ul li { font-size: 12px; color: var(--slate); padding: 3px 0; padding-left: 16px; position: relative; }
-  .success-next ul li::before { content: '→'; position: absolute; left: 0; color: var(--indigo); }
-  .btn-restart { margin-top: 20px; background: var(--indigo); color: white; padding: 10px 24px; border-radius: 12px; border: none; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; }
-
-  /* Spinner */
-  .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,.4); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 8px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  @media (max-width: 600px) {
-    .card { padding: 20px; }
-    .grid-2 { grid-template-columns: 1fr; }
-    .topbar { padding: 10px 16px; }
-    .nav-dots { display: none; }
-  }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#f1f5f9;color:#1e293b;min-height:100vh}
+:root{
+  --ind:#4f46e5;--ind-dk:#3730a3;--ind-lt:#eef2ff;
+  --em:#059669;--em-lt:#ecfdf5;
+  --am:#d97706;--am-lt:#fffbeb;
+  --sl:#64748b;--sl-lt:#f8fafc;
+  --re:#dc2626;--re-lt:#fef2f2;
+  --bdr:#e2e8f0;--wh:#ffffff
+}
+#topbar{background:#fff;border-bottom:1px solid var(--bdr);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+#topbar .brand{display:flex;align-items:center;gap:10px}
+#topbar .badge{background:var(--ind);color:#fff;font-size:10px;font-weight:700;letter-spacing:.1em;padding:3px 8px;border-radius:6px}
+#topbar .lbl{font-size:13px;color:var(--sl);font-weight:500}
+#nav-dots{display:flex;align-items:center;gap:6px}
+.ndot{width:10px;height:10px;border-radius:50%;border:none;cursor:pointer;transition:all .2s;background:var(--bdr);padding:0}
+.ndot.active{background:var(--ind);transform:scale(1.35)}
+.ndot.done{background:#a5b4fc}
+#step-ctr{font-size:12px;color:var(--sl)}
+#main{display:flex;justify-content:center;padding:32px 16px;min-height:calc(100vh - 57px)}
+#card-wrap{width:100%;max-width:680px}
+#step-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:12px}
+#card{background:#fff;border-radius:20px;box-shadow:0 4px 24px rgba(0,0,0,.07);border:1px solid var(--bdr);padding:36px}
+.hero{background:linear-gradient(135deg,#4f46e5 0%,#312e81 100%);border-radius:16px;padding:32px;color:#fff;margin-bottom:28px}
+.hero-ey{font-size:11px;font-weight:700;letter-spacing:.15em;color:#a5b4fc;text-transform:uppercase;margin-bottom:6px}
+.hero h1{font-family:'DM Serif Display',serif;font-size:30px;margin-bottom:4px}
+.hero p{font-size:13px;color:#c7d2fe;margin-bottom:16px}
+.hero-tags{display:flex;gap:8px;flex-wrap:wrap}
+.hero-tag{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff}
+.sec-hdr{display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid var(--sl-lt)}
+.sec-num{width:36px;height:36px;border-radius:10px;background:var(--ind);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.sec-title{font-size:17px;font-weight:700;color:#0f172a}
+.sec-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--ind-lt);color:var(--ind);border:1px solid #c7d2fe;margin-top:2px;display:inline-block}
+.field{margin-bottom:20px}
+.field label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:4px}
+.field .hint{font-size:11px;color:#94a3b8;margin-bottom:6px}
+.req{color:var(--re)}
+input[type=text],input[type=number],input[type=date],select,textarea{width:100%;border:1.5px solid var(--bdr);border-radius:10px;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:#1e293b;background:#fff;outline:none;transition:border .2s,box-shadow .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--ind);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+textarea{resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.chk-grid{display:flex;flex-wrap:wrap;gap:8px;padding:14px;background:var(--sl-lt);border-radius:12px;border:1.5px solid var(--bdr)}
+.chk-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#334155;cursor:pointer}
+.chk-item input{accent-color:var(--ind);width:14px;height:14px}
+.dyn-lbl{font-size:13px;font-weight:600;color:#334155;margin-bottom:6px}
+.dyn-hint{font-size:11px;color:#94a3b8;margin-bottom:10px}
+.dyn-rows{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+.dyn-row{background:var(--sl-lt);border:1.5px solid var(--bdr);border-radius:14px;padding:16px;position:relative}
+.dyn-fields{display:flex;flex-direction:column;gap:10px;padding-right:28px}
+.dyn-fl{font-size:11px;font-weight:600;color:#64748b;display:block;margin-bottom:4px}
+.dyn-rm{position:absolute;top:12px;right:12px;background:none;border:none;color:#cbd5e1;font-size:18px;cursor:pointer;line-height:1;padding:0;transition:color .2s}
+.dyn-rm:hover{color:var(--re)}
+.add-btn{background:none;border:none;color:var(--ind);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;padding:4px 0;font-family:'DM Sans',sans-serif}
+.add-btn:hover{color:var(--ind-dk)}
+.callout{padding:12px 16px;border-radius:12px;font-size:12px;margin-bottom:16px}
+.callout.blue{background:var(--ind-lt);border:1px solid #c7d2fe;color:#3730a3}
+.callout.amber{background:var(--am-lt);border:1px solid #fde68a;color:#92400e}
+.callout.red{background:var(--re-lt);border:1px solid #fecaca;color:#991b1b}
+.callout strong{font-weight:700}
+.rv-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--sl-lt)}
+.rv-k{font-size:12px;font-weight:600;color:var(--sl)}
+.rv-v{font-size:13px;color:#1e293b;text-align:right;max-width:300px}
+.rv-empty{color:#cbd5e1;font-style:italic}
+#nav-bar{display:flex;justify-content:space-between;margin-top:24px}
+.btn{padding:10px 22px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-back{background:#fff;border:1.5px solid var(--bdr);color:#475569}
+.btn-back:hover:not(:disabled){background:var(--sl-lt)}
+.btn-back:disabled{opacity:.3;cursor:not-allowed}
+.btn-next{background:var(--ind);color:#fff}
+.btn-next:hover{background:var(--ind-dk)}
+.btn-sub{background:var(--em);color:#fff}
+.btn-sub:hover:not(:disabled){background:#047857}
+.btn-sub:disabled{opacity:.4;cursor:not-allowed}
+#success{display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px;background:var(--sl-lt)}
+.succ-card{background:#fff;border-radius:24px;box-shadow:0 8px 40px rgba(0,0,0,.1);padding:48px;max-width:480px;width:100%;text-align:center}
+.succ-icon{width:72px;height:72px;background:var(--em-lt);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px}
+.succ-card h1{font-family:'DM Serif Display',serif;font-size:26px;margin-bottom:6px}
+.succ-next{margin-top:24px;padding:16px;background:var(--sl-lt);border-radius:14px;text-align:left}
+.succ-next p{font-size:13px;font-weight:700;color:#334155;margin-bottom:8px}
+.succ-next li{font-size:12px;color:var(--sl);padding:3px 0 3px 16px;list-style:none;position:relative}
+.succ-next li::before{content:'→';position:absolute;left:0;color:var(--ind)}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:600px){#card{padding:20px}.grid2{grid-template-columns:1fr}#nav-dots{display:none}}
 </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState, useCallback } = React;
-
-// ── CONFIG ──────────────────────────────────────────────────────────────────
-const SP_SITE = "https://kccd.sharepoint.com/sites/DOAUR";
-const SP_LIST = "AUR Submissions";
-
-const STRATEGIC_GOALS = [
-  "Goal 1: Student Success & Equity",
-  "Goal 2: Academic Quality & Innovation",
-  "Goal 3: College Engagement & Partnerships",
-  "Goal 4: Compliance & Governance",
-  "Goal 5: Organizational Effectiveness",
-  "Goal 6: Fiscal Sustainability",
-  "Goal 7: Vision 2030 – Workforce & Community"
-];
-const THEME_AREAS = ["Compliance & Governance","Decision Support & Strategy","College Engagement","Fiscal Sustainability","Student Success","Operational Excellence"];
-const DEPARTMENTS = ["Institutional Research & Reporting (IRR)","Human Resources","Fiscal Services","Information Technology","Student Services","Academic Affairs","Facilities & Operations","Chancellor's Office"];
-const COLLEGES = ["Bakersfield College (BC)","Cerro Coso (CC)","Porterville College (PC)","District Office"];
-const YEAR = new Date().getFullYear();
-const YEAR_TYPE = YEAR % 2 === 1 ? "full" : "abbreviated";
-
-const SECTION_LABELS = {
-  1:"Executive Summary", 2:"Accomplishments & Impact", 3:"Strategic Goals 2025–2027",
-  4:"Staffing & Fiscal Plan", 5:"Special Projects & Software", 6:"Support for Colleges", 7:"Conclusion & Strategy"
-};
-const ACTIVE_SECTIONS = YEAR_TYPE === "full" ? [1,2,3,4,5,6,7] : [1,2,3,"4B",7];
-
-const initForm = () => ({
-  department:"", submitterName:"", submitterTitle:"", submissionYear: YEAR, yearType: YEAR_TYPE,
-  executiveSummary:"", strategicInitiatives:[], pastInvestmentImpact:"",
-  majorProjects:[{title:"",results:"",strategicGoal:""}],
-  serviceEnhancements:"", caseExamples:"",
-  kpis:[{name:"",metric:""}],
-  strategicGoalsRoadmap:[{goal:"",description:"",timeline:"",alignment:"",theme:""}],
-  currentStaffingOverview:"", gapAnalysis:"", growthPlan:"", impactsIfUnmet:"",
-  ongoingCommitments:[{category:"",description:"",cost:"",notes:""}],
-  newResourceRequests:[{request:"",amount:"",justification:"",alignment:"",priority:"Medium"}],
-  oneTimeSoftwareNeeds:[{item:"",cost:"",benefit:"",sustainability:""}],
-  infrastructurePlanning:"", pilotInitiatives:"",
-  collegeSupport:[{serviceType:"",description:"",collegesServed:[],outcomes:""}],
-  transparencyStatement:"",
-  visionStatement:"", fiscalSummary:"", partnershipInvitation:"",
-  forwardGoals:[{unit:"",priority:"",focus:""}],
-  feedbackQuestions:"", feedbackClarifications:"", feedbackConcerns:"",
-  feedbackReviewed:false, feedbackReviewDate:""
-});
-
-// ── SharePoint Submit ────────────────────────────────────────────────────────
-async function submitToSharePoint(form) {
-  // Get request digest (CSRF token) for SharePoint REST API
-  const digestResp = await fetch(`${SP_SITE}/_api/contextinfo`, {
-    method: "POST",
-    headers: { "Accept": "application/json;odata=verbose", "Content-Type": "application/json;odata=verbose" },
-    credentials: "include"
-  });
-  if (!digestResp.ok) throw new Error("Could not connect to SharePoint. Are you logged in to Microsoft 365?");
-  const digestData = await digestResp.json();
-  const digest = digestData.d.GetContextWebInformation.FormDigestValue;
-
-  const payload = {
-    __metadata: { type: "SP.Data.AUR_x0020_SubmissionsListItem" },
-    Title: `${form.department} – AUR ${form.submissionYear}`,
-    Department: form.department,
-    SubmitterName: form.submitterName,
-    SubmitterTitle: form.submitterTitle,
-    SubmissionYear: Number(form.submissionYear),
-    YearType: form.yearType,
-    ExecutiveSummary: form.executiveSummary,
-    StrategicInitiatives: form.strategicInitiatives.join("; "),
-    PastInvestmentImpact: form.pastInvestmentImpact,
-    MajorProjects: JSON.stringify(form.majorProjects),
-    ServiceEnhancements: form.serviceEnhancements,
-    CaseExamples: form.caseExamples,
-    KPIs: JSON.stringify(form.kpis),
-    StrategicGoalsRoadmap: JSON.stringify(form.strategicGoalsRoadmap),
-    StaffingOverview: form.currentStaffingOverview,
-    GapAnalysis: form.gapAnalysis,
-    GrowthPlan: form.growthPlan,
-    ImpactsIfUnmet: form.impactsIfUnmet,
-    OngoingCommitments: JSON.stringify(form.ongoingCommitments),
-    NewResourceRequests: JSON.stringify(form.newResourceRequests),
-    SoftwareNeeds: JSON.stringify(form.oneTimeSoftwareNeeds),
-    InfrastructurePlanning: form.infrastructurePlanning,
-    PilotInitiatives: form.pilotInitiatives,
-    CollegeSupport: JSON.stringify(form.collegeSupport),
-    TransparencyStatement: form.transparencyStatement,
-    VisionStatement: form.visionStatement,
-    FiscalSummary: form.fiscalSummary,
-    PartnershipInvitation: form.partnershipInvitation,
-    ForwardGoals: JSON.stringify(form.forwardGoals),
-    FeedbackQuestions: form.feedbackQuestions,
-    FeedbackClarifications: form.feedbackClarifications,
-    FeedbackConcerns: form.feedbackConcerns,
-    FeedbackReviewed: form.feedbackReviewed,
-    FeedbackReviewDate: form.feedbackReviewDate || null,
-    Status: "Submitted"
-  };
-
-  const resp = await fetch(`${SP_SITE}/_api/web/lists/getbytitle('${SP_LIST}')/items`, {
-    method: "POST",
-    headers: {
-      "Accept": "application/json;odata=verbose",
-      "Content-Type": "application/json;odata=verbose",
-      "X-RequestDigest": digest
-    },
-    credentials: "include",
-    body: JSON.stringify(payload)
-  });
-  if (!resp.ok) {
-    const err = await resp.json().catch(() => ({}));
-    throw new Error(err?.error?.message?.value || `SharePoint error ${resp.status}`);
-  }
-  return await resp.json();
-}
-
-// ── Reusable Components ──────────────────────────────────────────────────────
-function Field({ label, hint, required, children }) {
-  return (
-    <div className="field">
-      <label>{label}{required && <span className="req"> *</span>}</label>
-      {hint && <div className="hint">{hint}</div>}
-      {children}
-    </div>
-  );
-}
-
-function DynRows({ label, hint, rows, setRows, fields, addLabel }) {
-  const blank = () => Object.fromEntries(fields.map(f => [f.key, f.default ?? ""]));
-  const add = () => setRows([...rows, blank()]);
-  const remove = i => setRows(rows.filter((_,idx) => idx !== i));
-  const update = (i, key, val) => { const r=[...rows]; r[i]={...r[i],[key]:val}; setRows(r); };
-  return (
-    <div style={{marginBottom:20}}>
-      {label && <div className="dyn-label">{label}</div>}
-      {hint && <div className="dyn-hint">{hint}</div>}
-      <div className="dyn-rows">
-        {rows.map((row,i) => (
-          <div className="dyn-row" key={i}>
-            <button className="dyn-remove" onClick={() => remove(i)}>×</button>
-            <div className="dyn-row-fields">
-              {fields.map(f => (
-                <div key={f.key}>
-                  <span className="dyn-field-label">{f.label}</span>
-                  {f.type==="textarea" ? (
-                    <textarea rows={2} value={row[f.key]||""} placeholder={f.placeholder||""} onChange={e=>update(i,f.key,e.target.value)} />
-                  ) : f.type==="select" ? (
-                    <select value={row[f.key]||""} onChange={e=>update(i,f.key,e.target.value)}>
-                      <option value="">Select…</option>
-                      {f.options.map(o=><option key={o} value={o}>{o}</option>)}
-                    </select>
-                  ) : f.type==="multiselect" ? (
-                    <div className="check-grid" style={{marginTop:4}}>
-                      {f.options.map(o=>(
-                        <label className="check-item" key={o}>
-                          <input type="checkbox" checked={(row[f.key]||[]).includes(o)}
-                            onChange={e=>{const c=row[f.key]||[]; update(i,f.key,e.target.checked?[...c,o]:c.filter(x=>x!==o));}} />
-                          {o}
-                        </label>
-                      ))}
-                    </div>
-                  ) : (
-                    <input type="text" value={row[f.key]||""} placeholder={f.placeholder||""} onChange={e=>update(i,f.key,e.target.value)} />
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-      <button className="add-btn" onClick={add}>＋ {addLabel||"Add Row"}</button>
-    </div>
-  );
-}
-
-// ── Steps ────────────────────────────────────────────────────────────────────
-function Cover({ form, set }) {
-  return (
-    <div>
-      <div className="hero">
-        <div className="hero-eyebrow">Kern Community College District</div>
-        <h1>Annual Unit Review</h1>
-        <p>Strategic Accountability &amp; Planning Document</p>
-        <div className="hero-tags">
-          <span className="hero-tag">{YEAR}</span>
-          <span className="hero-tag">{YEAR_TYPE==="full" ? "Full AUR – All 7 Sections" : "Abbreviated Update – Even Year"}</span>
-        </div>
-      </div>
-      <Field label="Department / Service Unit" required>
-        <select value={form.department} onChange={e=>set("department",e.target.value)}>
-          <option value="">Select department…</option>
-          {DEPARTMENTS.map(d=><option key={d} value={d}>{d}</option>)}
-        </select>
-      </Field>
-      <div className="grid-2">
-        <Field label="Submitter Name" required>
-          <input type="text" value={form.submitterName} placeholder="Full name" onChange={e=>set("submitterName",e.target.value)} />
-        </Field>
-        <Field label="Title / Role">
-          <input type="text" value={form.submitterTitle} placeholder="e.g., Director of IR" onChange={e=>set("submitterTitle",e.target.value)} />
-        </Field>
-      </div>
-      <Field label="Submission Year">
-        <input type="number" value={form.submissionYear} onChange={e=>set("submissionYear",e.target.value)} style={{width:140}} />
-      </Field>
-      <div className="callout amber">
-        <strong>Submission Cycle:</strong> {YEAR_TYPE==="full"
-          ? "This is an odd year — a Full AUR with all 7 sections is required."
-          : "This is an even year — an Abbreviated Update (Sections 1, 2, 3, 4B, and 7) is required."}
+<div id="topbar">
+  <div class="brand"><span class="badge">KCCD</span><span class="lbl">Annual Unit Review</span></div>
+  <div id="nav-dots"></div>
+  <div id="step-ctr"></div>
+</div>
+<div id="app-wrap">
+  <div id="main">
+    <div id="card-wrap">
+      <div id="step-lbl"></div>
+      <div id="card"></div>
+      <div id="err-box"></div>
+      <div id="nav-bar">
+        <button class="btn btn-back" id="btn-back" onclick="prevStep()">← Back</button>
+        <button class="btn btn-next" id="btn-next" onclick="nextStep()">Continue →</button>
       </div>
     </div>
-  );
-}
-
-function Sec1({ form, set }) {
-  return (
-    <div>
-      <div className="section-header">
-        <div className="section-num">1</div>
-        <div><div className="section-title">Executive Summary</div><span className="section-badge">Narrative-Based</span></div>
-      </div>
-      <Field label="Department Strategic Role & Vision" hint="Frame the department's role, major accomplishments, and vision for the next cycle. Emphasize districtwide impact." required>
-        <textarea rows={5} value={form.executiveSummary} placeholder="Describe your department's strategic role and vision…" onChange={e=>set("executiveSummary",e.target.value)} />
-      </Field>
-      <Field label="Strategic Initiatives Supported" hint="Select all district strategic initiatives this department actively supports.">
-        <div className="check-grid">
-          {STRATEGIC_GOALS.map(g=>(
-            <label className="check-item" key={g}>
-              <input type="checkbox" checked={form.strategicInitiatives.includes(g)}
-                onChange={e=>set("strategicInitiatives", e.target.checked ? [...form.strategicInitiatives,g] : form.strategicInitiatives.filter(x=>x!==g))} />
-              {g}
-            </label>
-          ))}
-        </div>
-      </Field>
-      <Field label="How Past Investments Improved College-Level Service">
-        <textarea rows={3} value={form.pastInvestmentImpact} placeholder="Describe outcomes from prior investments…" onChange={e=>set("pastInvestmentImpact",e.target.value)} />
-      </Field>
+  </div>
+</div>
+<div id="success">
+  <div class="succ-card">
+    <div class="succ-icon">✓</div>
+    <h1>AUR Submitted!</h1>
+    <p id="succ-dept" style="font-weight:600"></p>
+    <p id="succ-sub" style="font-size:13px;color:#64748b"></p>
+    <div style="margin-top:12px" id="succ-tag"></div>
+    <div class="succ-next">
+      <p>Next Steps</p>
+      <ul>
+        <li>Submission saved to SharePoint AUR Submissions list</li>
+        <li>Review compiled at Chancellor's Cabinet</li>
+        <li>College partners have 30 days to provide feedback</li>
+        <li>Department response required by noted date</li>
+      </ul>
     </div>
-  );
-}
-
-function Sec2({ form, set, setArr }) {
-  return (
-    <div>
-      <div className="section-header">
-        <div className="section-num">2</div>
-        <div><div className="section-title">Accomplishments & Impact</div></div>
-      </div>
-      <DynRows label="Major Projects Completed" hint="Include results and strategic impact for each project."
-        rows={form.majorProjects} setRows={v=>setArr("majorProjects",v)} addLabel="Add Project"
-        fields={[
-          {key:"title",label:"Project Title",placeholder:"e.g., Deploy iData Cookbook"},
-          {key:"results",label:"Results & Impact",type:"textarea",placeholder:"Describe outcomes…"},
-          {key:"strategicGoal",label:"Strategic Goal Alignment",type:"select",options:STRATEGIC_GOALS}
-        ]} />
-      <Field label="Service Enhancements" hint="Expansion of scope, improved delivery, new capabilities.">
-        <textarea rows={3} value={form.serviceEnhancements} placeholder="Describe service enhancements this cycle…" onChange={e=>set("serviceEnhancements",e.target.value)} />
-      </Field>
-      <DynRows label="Key Performance Indicators (KPIs)"
-        rows={form.kpis} setRows={v=>setArr("kpis",v)} addLabel="Add KPI"
-        fields={[
-          {key:"name",label:"KPI Name",placeholder:"e.g., MIS Submission Accuracy"},
-          {key:"metric",label:"Result / Metric",placeholder:"e.g., On time for all submissions"}
-        ]} />
-      <Field label="Case Examples" hint="Short narratives showing how services informed decisions or improved performance.">
-        <textarea rows={3} value={form.caseExamples} placeholder="e.g., 'Bakersfield College used our enrollment dashboard to…'" onChange={e=>set("caseExamples",e.target.value)} />
-      </Field>
-    </div>
-  );
-}
-
-function Sec3({ form, setArr }) {
-  return (
-    <div>
-      <div className="section-header">
-        <div className="section-num">3</div>
-        <div><div className="section-title">Strategic Goals 2025–2027</div><span className="section-badge">Roadmap Format</span></div>
-      </div>
-      <p style={{fontSize:13,color:"#64748b",marginBottom:20}}>Present goals as a roadmap grouped thematically: Compliance & Governance, Decision Support & Strategy, College Engagement.</p>
-      <DynRows rows={form.strategicGoalsRoadmap} setRows={v=>setArr("strategicGoalsRoadmap",v)} addLabel="Add Goal"
-        fields={[
-          {key:"goal",label:"Department Goal",placeholder:"e.g., Strengthen Data Governance"},
-          {key:"description",label:"Description",type:"textarea",placeholder:"What will be accomplished…"},
-          {key:"timeline",label:"Timeline",placeholder:"e.g., FY 2025"},
-          {key:"alignment",label:"Strategic Goal Alignment",type:"select",options:STRATEGIC_GOALS},
-          {key:"theme",label:"Thematic Area",type:"select",options:THEME_AREAS}
-        ]} />
-    </div>
-  );
-}
-
-function Sec4({ form, set, setArr }) {
-  return (
-    <div>
-      <div className="section-header">
-        <div className="section-num">4</div>
-        <div><div className="section-title">Staffing & Fiscal Sustainability Plan</div></div>
-      </div>
-      <Field label="Current Staffing Overview">
-        <textarea rows={3} value={form.currentStaffingOverview} placeholder="Describe current team structure…" onChange={e=>set("currentStaffingOverview",e.target.value)} />
-      </Field>
-      <Field label="Gap Analysis" hint="What current staffing cannot support — be specific.">
-        <textarea rows={3} value={form.gapAnalysis} placeholder="Describe gaps in capacity or capability…" onChange={e=>set("gapAnalysis",e.target.value)} />
-      </Field>
-      <Field label="Growth Plan" hint="Roles needed, tied to district initiatives like Vision 2030.">
-        <textarea rows={3} value={form.growthPlan} placeholder="Describe planned staffing growth…" onChange={e=>set("growthPlan",e.target.value)} />
-      </Field>
-      <Field label="Impacts if Resource Needs are Unmet">
-        <textarea rows={2} value={form.impactsIfUnmet} placeholder="Describe operational or strategic risk…" onChange={e=>set("impactsIfUnmet",e.target.value)} />
-      </Field>
-      <div style={{marginTop:24}}>
-        <div className="dyn-label">4A. Ongoing Off-the-Top Commitments</div>
-        <DynRows rows={form.ongoingCommitments} setRows={v=>setArr("ongoingCommitments",v)} addLabel="Add Commitment"
-          fields={[
-            {key:"category",label:"Category",placeholder:"e.g., Software, Staffing, Contracts"},
-            {key:"description",label:"Description",placeholder:"e.g., Tableau, Invoke, iData"},
-            {key:"cost",label:"Cost",placeholder:"$XX,XXX"},
-            {key:"notes",label:"Notes",placeholder:"e.g., Supports all colleges"}
-          ]} />
-      </div>
-      <div className="callout blue"><strong>Note:</strong> All new resource requests must demonstrate districtwide benefit. College-only projects are not supported.</div>
-      <div style={{marginTop:16}}>
-        <div className="dyn-label">4B. New Resource Requests</div>
-        <DynRows rows={form.newResourceRequests} setRows={v=>setArr("newResourceRequests",v)} addLabel="Add Request"
-          fields={[
-            {key:"request",label:"Request",placeholder:"e.g., Senior Research Analyst"},
-            {key:"amount",label:"Amount",placeholder:"$XX,XXX"},
-            {key:"justification",label:"Justification",type:"textarea",placeholder:"Why is this needed?"},
-            {key:"alignment",label:"Goal Alignment",type:"select",options:STRATEGIC_GOALS},
-            {key:"priority",label:"Priority",type:"select",options:["High","Medium","Low"],default:"Medium"}
-          ]} />
-      </div>
-    </div>
-  );
-}
-
-function Sec5({ form, set, setArr }) {
-  return (
-    <div>
-      <div className="section-header">
-        <div className="section-num">5</div>
-        <div><div className="section-title">Special Projects & Software Budget</div><span className="section-badge">New Phase</span></div>
-      </div>
-      <DynRows label="One-Time Software Needs" hint="e.g., Invoke Clarity, Tableau licenses, post-Cognos reporting tools"
-        rows={form.oneTimeSoftwareNeeds} setRows={v=>setArr("oneTimeSoftwareNeeds",v)} addLabel="Add Software Need"
-        fields={[
-          {key:"item",label:"Software / Tool",placeholder:"e.g., Invoke Clarity"},
-          {key:"cost",label:"Estimated Cost",placeholder:"$XX,XXX"},
-          {key:"benefit",label:"Benefit",type:"textarea",placeholder:"Describe expected benefit…"},
-          {key:"sustainability",label:"Sustainability Strategy",placeholder:"How will this be maintained long-term?"}
-        ]} />
-      <Field label="Infrastructure Planning" hint="Planning for new reporting tools, system migrations, post-Cognos, etc.">
-        <textarea rows={3} value={form.infrastructurePlanning} placeholder="Describe infrastructure planning needs…" onChange={e=>set("infrastructurePlanning",e.target.value)} />
-      </Field>
-      <Field label="Pilot Initiatives Requiring Investment">
-        <textarea rows={3} value={form.pilotInitiatives} placeholder="e.g., Departmental dashboard curation pilot…" onChange={e=>set("pilotInitiatives",e.target.value)} />
-      </Field>
-    </div>
-  );
-}
-
-function Sec6({ form, set, setArr }) {
-  return (
-    <div>
-      <div className="section-header">
-        <div className="section-num">6</div>
-        <div><div className="section-title">Support for Colleges & District Accountability</div></div>
-      </div>
-      <DynRows label="College Support Services" hint="Highlight how your department supports each college."
-        rows={form.collegeSupport} setRows={v=>setArr("collegeSupport",v)} addLabel="Add Service"
-        fields={[
-          {key:"serviceType",label:"Service Type",placeholder:"e.g., Research Support, Training"},
-          {key:"description",label:"Description",type:"textarea",placeholder:"Describe the service…"},
-          {key:"collegesServed",label:"Colleges Served",type:"multiselect",options:COLLEGES,default:[]},
-          {key:"outcomes",label:"Outcomes",placeholder:"e.g., $X in grants secured, 9 staff trained"}
-        ]} />
-      <Field label="Transparency, Accuracy & Compliance Statement" hint="How does your department ensure accountability in service delivery?">
-        <textarea rows={3} value={form.transparencyStatement} placeholder="Describe your accountability mechanisms…" onChange={e=>set("transparencyStatement",e.target.value)} />
-      </Field>
-    </div>
-  );
-}
-
-function Sec7({ form, set, setArr }) {
-  return (
-    <div>
-      <div className="section-header">
-        <div className="section-num">7</div>
-        <div><div className="section-title">Conclusion & Forward Strategy</div></div>
-      </div>
-      <Field label="Strategic Vision Statement for the Year" hint="The theme for the coming cycle — what you want to accomplish." required>
-        <textarea rows={3} value={form.visionStatement} placeholder="e.g., 'Becoming a data-informed district through accessible, timely, and trusted research.'" onChange={e=>set("visionStatement",e.target.value)} />
-      </Field>
-      <DynRows label="Forward Goals Table" rows={form.forwardGoals} setRows={v=>setArr("forwardGoals",v)} addLabel="Add Forward Goal"
-        fields={[
-          {key:"unit",label:"Goal / Activity",placeholder:"e.g., Expand Tableau training"},
-          {key:"priority",label:"Linked Strategic Priority",type:"select",options:STRATEGIC_GOALS},
-          {key:"focus",label:"Year-Specific Focus",placeholder:"e.g., 2025: Data coaching initiative"}
-        ]} />
-      <Field label="Summary of Fiscal Asks & Connection to Vision">
-        <textarea rows={3} value={form.fiscalSummary} placeholder="Summarize how fiscal requests enable the vision…" onChange={e=>set("fiscalSummary",e.target.value)} />
-      </Field>
-      <Field label="Invitation to Partner in Accountability with Colleges">
-        <textarea rows={2} value={form.partnershipInvitation} placeholder="e.g., We invite college partners to engage with us on…" onChange={e=>set("partnershipInvitation",e.target.value)} />
-      </Field>
-    </div>
-  );
-}
-
-function Feedback({ form, set }) {
-  return (
-    <div>
-      <div className="section-header">
-        <div className="section-num">✉</div>
-        <div><div className="section-title">Feedback & College Review</div></div>
-      </div>
-      <div className="callout blue" style={{marginBottom:20}}>Space for colleges to respond. Department leaders will respond to feedback compiled at Chancellor's Cabinet.</div>
-      <Field label="Questions from Colleges">
-        <textarea rows={3} value={form.feedbackQuestions} placeholder="List any questions received from college partners…" onChange={e=>set("feedbackQuestions",e.target.value)} />
-      </Field>
-      <Field label="Clarifications">
-        <textarea rows={3} value={form.feedbackClarifications} placeholder="Note clarifications needed or provided…" onChange={e=>set("feedbackClarifications",e.target.value)} />
-      </Field>
-      <Field label="Concerns">
-        <textarea rows={3} value={form.feedbackConcerns} placeholder="Document any concerns raised…" onChange={e=>set("feedbackConcerns",e.target.value)} />
-      </Field>
-      <div style={{padding:"14px 16px",background:"#f8fafc",borderRadius:12,border:"1.5px solid #e2e8f0"}}>
-        <label style={{display:"flex",alignItems:"flex-start",gap:10,cursor:"pointer"}}>
-          <input type="checkbox" style={{marginTop:2,accentColor:"#4f46e5"}} checked={form.feedbackReviewed} onChange={e=>set("feedbackReviewed",e.target.checked)} />
-          <div>
-            <div style={{fontSize:13,fontWeight:600,color:"#334155"}}>All feedback reviewed and responded to</div>
-            {form.feedbackReviewed && (
-              <input type="date" style={{marginTop:8,width:180}} value={form.feedbackReviewDate} onChange={e=>set("feedbackReviewDate",e.target.value)} />
-            )}
-          </div>
-        </label>
-      </div>
-    </div>
-  );
-}
-
-function Review({ form }) {
-  const rows = [
-    ["Department", form.department],
-    ["Submitter", [form.submitterName, form.submitterTitle].filter(Boolean).join(" · ")],
-    ["Year", form.submissionYear],
-    ["Submission Type", form.yearType==="full" ? "Full AUR (All 7 Sections)" : "Abbreviated Update"],
-    ["Strategic Initiatives", form.strategicInitiatives.length ? form.strategicInitiatives.join(", ") : null],
-    ["Major Projects", form.majorProjects.filter(p=>p.title).length || null],
-    ["Strategic Goals", form.strategicGoalsRoadmap.filter(g=>g.goal).length || null],
-    ["New Resource Requests", form.newResourceRequests.filter(r=>r.request).length || null],
-    ["Vision Statement", form.visionStatement ? form.visionStatement.slice(0,80)+(form.visionStatement.length>80?"…":"") : null],
-  ];
-  return (
-    <div>
-      <div className="section-header">
-        <div className="section-num">✓</div>
-        <div><div className="section-title">Review & Submit</div></div>
-      </div>
-      {(!form.department||!form.submitterName) && (
-        <div className="callout red" style={{marginBottom:16}}><strong>Required:</strong> Please complete Department and Submitter Name on the Cover page before submitting.</div>
-      )}
-      {rows.map(([k,v])=>(
-        <div className="review-row" key={k}>
-          <span className="review-key">{k}</span>
-          <span className="review-val">{v ?? <span className="review-empty">Not provided</span>}</span>
-        </div>
-      ))}
-      <div className="callout blue" style={{marginTop:20}}>
-        By submitting, this AUR will be saved to SharePoint and compiled for review at Chancellor's Cabinet. College partners will receive 30 days to provide feedback.
-      </div>
-    </div>
-  );
-}
-
-// ── App Shell ────────────────────────────────────────────────────────────────
-export default function App() {
-  const [form, setForm] = useState(initForm());
-  const [step, setStep] = useState(0);
-  const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(null);
-
-  const set = (k, v) => setForm(f => ({...f, [k]: v}));
-  const setArr = (k, v) => setForm(f => ({...f, [k]: v}));
-
-  const sectionSteps = ACTIVE_SECTIONS;
-  const stepLabels = ["Cover", ...sectionSteps.map(s => SECTION_LABELS[s]||`Section ${s}`), "Feedback", "Review & Submit"];
-  const totalSteps = stepLabels.length;
-  const maxStep = totalSteps - 1;
-  const isLast = step === maxStep;
-
-  const handleSubmit = async () => {
-    setSubmitting(true);
-    setError(null);
-    try {
-      await submitToSharePoint(form);
-      setSubmitted(true);
-    } catch(e) {
-      setError(e.message);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const renderStep = () => {
-    if (step === 0) return <Cover form={form} set={set} />;
-    const sec = sectionSteps[step - 1];
-    if (sec === 1) return <Sec1 form={form} set={set} />;
-    if (sec === 2) return <Sec2 form={form} set={set} setArr={setArr} />;
-    if (sec === 3) return <Sec3 form={form} setArr={setArr} />;
-    if (sec === 4 || sec === "4B") return <Sec4 form={form} set={set} setArr={setArr} />;
-    if (sec === 5) return <Sec5 form={form} set={set} setArr={setArr} />;
-    if (sec === 6) return <Sec6 form={form} set={set} setArr={setArr} />;
-    if (sec === 7) return <Sec7 form={form} set={set} setArr={setArr} />;
-    if (step === maxStep - 1) return <Feedback form={form} set={set} />;
-    if (step === maxStep) return <Review form={form} />;
-  };
-
-  // Detect feedback step
-  const isFeedback = step === totalSteps - 2;
-  const isReview = step === totalSteps - 1;
-  if (!isFeedback && !isReview && step > 0 && step <= sectionSteps.length) {
-    // already handled above
-  }
-
-  if (submitted) return (
-    <div className="success-wrap">
-      <div className="success-card">
-        <div className="success-icon">✓</div>
-        <h1>AUR Submitted!</h1>
-        <p style={{fontWeight:600}}>{form.department}</p>
-        <p>{form.submitterName} · {form.submissionYear}</p>
-        <div style={{marginTop:12}}>
-          <span style={{background:"#ecfdf5",color:"#065f46",border:"1px solid #a7f3d0",fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:20}}>
-            {form.yearType==="full" ? "Full AUR – All 7 Sections" : "Abbreviated Update"}
-          </span>
-        </div>
-        <div className="success-next">
-          <p>Next Steps</p>
-          <ul>
-            <li>Submission saved to SharePoint AUR Submissions list</li>
-            <li>Review compiled at Chancellor's Cabinet</li>
-            <li>College partners have 30 days to provide feedback</li>
-            <li>Department response required by noted date</li>
-          </ul>
-        </div>
-        <button className="btn-restart" onClick={() => { setSubmitted(false); setStep(0); setForm(initForm()); }}>
-          Start New AUR
-        </button>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="app">
-      <div className="topbar">
-        <div className="topbar-brand">
-          <span className="badge">KCCD</span>
-          <span className="label">Annual Unit Review</span>
-        </div>
-        <div className="nav-dots">
-          {stepLabels.map((label,i) => (
-            <button key={i} className={`nav-dot${step===i?" active":step>i?" done":""}`} onClick={() => setStep(i)} title={label} />
-          ))}
-        </div>
-        <div className="step-counter">Step {step+1} of {totalSteps}</div>
-      </div>
-
-      <div className="main">
-        <div className="card-wrap">
-          <div className="step-label" style={{marginBottom:12,color:"#94a3b8",fontSize:11,textTransform:"uppercase",letterSpacing:".08em"}}>
-            {stepLabels[step]}
-          </div>
-          <div className="card">
-            {renderStep()}
-          </div>
-          {error && <div className="callout red" style={{marginTop:12}}><strong>Error:</strong> {error}</div>}
-          <div className="nav-bar">
-            <button className="btn btn-back" disabled={step===0} onClick={() => setStep(s=>Math.max(0,s-1))}>← Back</button>
-            {isLast ? (
-              <button className="btn btn-submit" disabled={!form.department||!form.submitterName||submitting} onClick={handleSubmit}>
-                {submitting ? <><span className="spinner"></span>Saving…</> : "Submit AUR ✓"}
-              </button>
-            ) : (
-              <button className="btn btn-next" onClick={() => setStep(s=>Math.min(maxStep,s+1))}>Continue →</button>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-</script>
+    <button class="btn btn-next" style="margin-top:20px" onclick="restart()">Start New AUR</button>
+  </div>
+</div>
 <script>
-  const root = ReactDOM.createRoot(document.getElementById('root'));
-  root.render(React.createElement(App));
+const SP_SITE="https://kccd.sharepoint.com/sites/DOAUR";
+const SP_LIST="AUR Submissions";
+const STRATEGIC_GOALS=["Goal 1: Student Success & Equity","Goal 2: Academic Quality & Innovation","Goal 3: College Engagement & Partnerships","Goal 4: Compliance & Governance","Goal 5: Organizational Effectiveness","Goal 6: Fiscal Sustainability","Goal 7: Vision 2030 – Workforce & Community"];
+const THEMES=["Compliance & Governance","Decision Support & Strategy","College Engagement","Fiscal Sustainability","Student Success","Operational Excellence"];
+const DEPTS=["Institutional Research & Reporting (IRR)","Human Resources","Fiscal Services","Information Technology","Student Services","Academic Affairs","Facilities & Operations","Chancellor's Office"];
+const COLLEGES=["Bakersfield College (BC)","Cerro Coso (CC)","Porterville College (PC)","District Office"];
+const YEAR=new Date().getFullYear();
+const YEAR_TYPE=YEAR%2===1?"full":"abbreviated";
+const ACTIVE_SECS=YEAR_TYPE==="full"?[1,2,3,4,5,6,7]:[1,2,3,"4B",7];
+const SEC_LABELS={1:"Executive Summary",2:"Accomplishments & Impact",3:"Strategic Goals 2025–2027",4:"Staffing & Fiscal Plan","4B":"Staffing & Fiscal Plan",5:"Special Projects & Software",6:"Support for Colleges",7:"Conclusion & Strategy"};
+const STEP_LABELS=["Cover",...ACTIVE_SECS.map(s=>SEC_LABELS[s]),"Feedback","Review & Submit"];
+const MAX_STEP=STEP_LABELS.length-1;
+let step=0;
+let form=initForm();
+function initForm(){return{department:"",submitterName:"",submitterTitle:"",submissionYear:YEAR,yearType:YEAR_TYPE,executiveSummary:"",strategicInitiatives:[],pastInvestmentImpact:"",majorProjects:[{title:"",results:"",strategicGoal:""}],serviceEnhancements:"",caseExamples:"",kpis:[{name:"",metric:""}],strategicGoalsRoadmap:[{goal:"",description:"",timeline:"",alignment:"",theme:""}],currentStaffingOverview:"",gapAnalysis:"",growthPlan:"",impactsIfUnmet:"",ongoingCommitments:[{category:"",description:"",cost:"",notes:""}],newResourceRequests:[{request:"",amount:"",justification:"",alignment:"",priority:"Medium"}],oneTimeSoftwareNeeds:[{item:"",cost:"",benefit:"",sustainability:""}],infrastructurePlanning:"",pilotInitiatives:"",collegeSupport:[{serviceType:"",description:"",collegesServed:[],outcomes:""}],transparencyStatement:"",visionStatement:"",fiscalSummary:"",partnershipInvitation:"",forwardGoals:[{unit:"",priority:"",focus:""}],feedbackQuestions:"",feedbackClarifications:"",feedbackConcerns:"",feedbackReviewed:false,feedbackReviewDate:""};}
+function el(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!==undefined)e.innerHTML=html;return e;}
+function mkField(label,hint,required,inner){const d=el("div","field");const lbl=el("label","",label+(required?' <span class="req">*</span>':""));d.appendChild(lbl);if(hint){d.appendChild(el("div","hint",hint));}d.appendChild(inner);return d;}
+function mkCallout(type,html){return el("div","callout "+type,html);}
+function mkSecHdr(num,title,badge){const d=el("div","sec-hdr");const n=el("div","sec-num",String(num));const t=el("div");t.appendChild(el("div","sec-title",title));if(badge)t.appendChild(el("span","sec-badge",badge));d.appendChild(n);d.appendChild(t);return d;}
+function mkSelect(val,options,onChange){const s=document.createElement("select");s.innerHTML='<option value="">Select…</option>'+options.map(o=>`<option value="${o}"${val===o?" selected":""}>${o}</option>`).join("");s.onchange=()=>onChange(s.value);return s;}
+function dynRows(arrKey,fields,addLabel){
+  const wrap=el("div");
+  function render(){
+    wrap.innerHTML="";
+    const rows=el("div","dyn-rows");
+    form[arrKey].forEach((row,i)=>{
+      const r=el("div","dyn-row");
+      const rm=el("button","dyn-rm","×");
+      rm.onclick=()=>{form[arrKey].splice(i,1);render();};
+      r.appendChild(rm);
+      const ff=el("div","dyn-fields");
+      fields.forEach(f=>{
+        ff.appendChild(el("span","dyn-fl",f.label));
+        if(f.type==="textarea"){
+          const t=document.createElement("textarea");t.rows=2;t.value=row[f.key]||"";t.placeholder=f.placeholder||"";t.oninput=()=>{form[arrKey][i][f.key]=t.value;};ff.appendChild(t);
+        }else if(f.type==="select"){
+          const s=mkSelect(row[f.key]||"",f.options,v=>{form[arrKey][i][f.key]=v;});ff.appendChild(s);
+        }else if(f.type==="multiselect"){
+          const cg=el("div","chk-grid");
+          f.options.forEach(o=>{const lbl=el("label","chk-item");const cb=document.createElement("input");cb.type="checkbox";cb.checked=(row[f.key]||[]).includes(o);cb.onchange=()=>{const c=form[arrKey][i][f.key]||[];form[arrKey][i][f.key]=cb.checked?[...c,o]:c.filter(x=>x!==o);};lbl.appendChild(cb);lbl.appendChild(document.createTextNode(" "+o));cg.appendChild(lbl);});ff.appendChild(cg);
+        }else{
+          const inp=document.createElement("input");inp.type="text";inp.value=row[f.key]||"";inp.placeholder=f.placeholder||"";inp.oninput=()=>{form[arrKey][i][f.key]=inp.value;};ff.appendChild(inp);
+        }
+      });
+      r.appendChild(ff);rows.appendChild(r);
+    });
+    wrap.appendChild(rows);
+    const ab=el("button","add-btn","＋ "+(addLabel||"Add Row"));
+    ab.onclick=()=>{const b={};fields.forEach(f=>{b[f.key]=f.default!==undefined?f.default:"";});form[arrKey].push(b);render();};
+    wrap.appendChild(ab);
+  }
+  render();return wrap;
+}
+function renderCover(){
+  const d=el("div");
+  const hero=el("div","hero",`<div class="hero-ey">Kern Community College District</div><h1>Annual Unit Review</h1><p>Strategic Accountability &amp; Planning Document</p><div class="hero-tags"><span class="hero-tag">${YEAR}</span><span class="hero-tag">${YEAR_TYPE==="full"?"Full AUR – All 7 Sections":"Abbreviated Update – Even Year"}</span></div>`);
+  d.appendChild(hero);
+  const ds=mkSelect(form.department,DEPTS,v=>{form.department=v;});
+  d.appendChild(mkField("Department / Service Unit",null,true,ds));
+  const g=el("div","grid2");
+  const ni=document.createElement("input");ni.type="text";ni.value=form.submitterName;ni.placeholder="Full name";ni.oninput=()=>{form.submitterName=ni.value;};
+  const ti=document.createElement("input");ti.type="text";ti.value=form.submitterTitle;ti.placeholder="e.g., Director of IR";ti.oninput=()=>{form.submitterTitle=ti.value;};
+  g.appendChild(mkField("Submitter Name",null,true,ni));g.appendChild(mkField("Title / Role",null,false,ti));d.appendChild(g);
+  const yi=document.createElement("input");yi.type="number";yi.value=form.submissionYear;yi.style.width="140px";yi.oninput=()=>{form.submissionYear=yi.value;};
+  d.appendChild(mkField("Submission Year",null,false,yi));
+  d.appendChild(mkCallout("amber",`<strong>Submission Cycle:</strong> ${YEAR_TYPE==="full"?"This is an odd year — a Full AUR with all 7 sections is required.":"This is an even year — an Abbreviated Update (Sections 1, 2, 3, 4B, and 7) is required."}`));
+  return d;
+}
+function renderSec1(){
+  const d=el("div");d.appendChild(mkSecHdr(1,"Executive Summary","Narrative-Based"));
+  const ta=document.createElement("textarea");ta.rows=5;ta.value=form.executiveSummary;ta.placeholder="Describe your department's strategic role and vision…";ta.oninput=()=>{form.executiveSummary=ta.value;};
+  d.appendChild(mkField("Department Strategic Role & Vision","Frame the department's role, major accomplishments, and vision for the next cycle.",true,ta));
+  const cg=el("div","chk-grid");
+  STRATEGIC_GOALS.forEach(g=>{const lbl=el("label","chk-item");const cb=document.createElement("input");cb.type="checkbox";cb.checked=form.strategicInitiatives.includes(g);cb.onchange=()=>{form.strategicInitiatives=cb.checked?[...form.strategicInitiatives,g]:form.strategicInitiatives.filter(x=>x!==g);};lbl.appendChild(cb);lbl.appendChild(document.createTextNode(" "+g));cg.appendChild(lbl);});
+  d.appendChild(mkField("Strategic Initiatives Supported","Select all district strategic initiatives this department actively supports.",false,cg));
+  const ta2=document.createElement("textarea");ta2.rows=3;ta2.value=form.pastInvestmentImpact;ta2.placeholder="Describe outcomes from prior investments…";ta2.oninput=()=>{form.pastInvestmentImpact=ta2.value;};
+  d.appendChild(mkField("How Past Investments Improved College-Level Service",null,false,ta2));
+  return d;
+}
+function renderSec2(){
+  const d=el("div");d.appendChild(mkSecHdr(2,"Accomplishments & Impact"));
+  d.appendChild(el("div","dyn-lbl","Major Projects Completed"));d.appendChild(el("div","dyn-hint","Include results and strategic impact for each project."));
+  d.appendChild(dynRows("majorProjects",[{key:"title",label:"Project Title",placeholder:"e.g., Deploy iData Cookbook"},{key:"results",label:"Results & Impact",type:"textarea",placeholder:"Describe outcomes…"},{key:"strategicGoal",label:"Strategic Goal Alignment",type:"select",options:STRATEGIC_GOALS}],"Add Project"));
+  const ta=document.createElement("textarea");ta.rows=3;ta.value=form.serviceEnhancements;ta.placeholder="Describe service enhancements this cycle…";ta.oninput=()=>{form.serviceEnhancements=ta.value;};
+  d.appendChild(mkField("Service Enhancements","Expansion of scope, improved delivery, new capabilities.",false,ta));
+  d.appendChild(el("div","dyn-lbl","Key Performance Indicators (KPIs)"));
+  d.appendChild(dynRows("kpis",[{key:"name",label:"KPI Name",placeholder:"e.g., MIS Submission Accuracy"},{key:"metric",label:"Result / Metric",placeholder:"e.g., On time for all submissions"}],"Add KPI"));
+  const ta2=document.createElement("textarea");ta2.rows=3;ta2.value=form.caseExamples;ta2.placeholder="e.g., 'Bakersfield College used our enrollment dashboard to…'";ta2.oninput=()=>{form.caseExamples=ta2.value;};
+  d.appendChild(mkField("Case Examples","Short narratives showing how services informed decisions.",false,ta2));
+  return d;
+}
+function renderSec3(){
+  const d=el("div");d.appendChild(mkSecHdr(3,"Strategic Goals 2025–2027","Roadmap Format"));
+  d.appendChild(el("p","",`<span style="font-size:13px;color:#64748b;display:block;margin-bottom:16px">Present goals as a roadmap grouped thematically.</span>`));
+  d.appendChild(dynRows("strategicGoalsRoadmap",[{key:"goal",label:"Department Goal",placeholder:"e.g., Strengthen Data Governance"},{key:"description",label:"Description",type:"textarea",placeholder:"What will be accomplished…"},{key:"timeline",label:"Timeline",placeholder:"e.g., FY 2025"},{key:"alignment",label:"Strategic Goal Alignment",type:"select",options:STRATEGIC_GOALS},{key:"theme",label:"Thematic Area",type:"select",options:THEMES}],"Add Goal"));
+  return d;
+}
+function renderSec4(){
+  const d=el("div");d.appendChild(mkSecHdr(4,"Staffing & Fiscal Sustainability Plan"));
+  const ks=["currentStaffingOverview","gapAnalysis","growthPlan","impactsIfUnmet"];
+  const ls=["Current Staffing Overview","Gap Analysis","Growth Plan","Impacts if Resource Needs are Unmet"];
+  const hs=["Describe current team structure…","What current staffing cannot support — be specific.","Roles needed, tied to district initiatives like Vision 2030.",null];
+  const ps=["Describe current team structure…","Describe gaps in capacity or capability…","Describe planned staffing growth…","Describe operational or strategic risk…"];
+  ks.forEach((k,i)=>{const ta=document.createElement("textarea");ta.rows=3;ta.value=form[k];ta.placeholder=ps[i];ta.oninput=()=>{form[k]=ta.value;};d.appendChild(mkField(ls[i],hs[i],false,ta));});
+  d.appendChild(el("div","dyn-lbl","4A. Ongoing Off-the-Top Commitments"));
+  d.appendChild(dynRows("ongoingCommitments",[{key:"category",label:"Category",placeholder:"e.g., Software, Staffing, Contracts"},{key:"description",label:"Description",placeholder:"e.g., Tableau, Invoke, iData"},{key:"cost",label:"Cost",placeholder:"$XX,XXX"},{key:"notes",label:"Notes",placeholder:"e.g., Supports all colleges"}],"Add Commitment"));
+  d.appendChild(mkCallout("blue","<strong>Note:</strong> All new resource requests must demonstrate districtwide benefit. College-only projects are not supported."));
+  d.appendChild(el("div","dyn-lbl","4B. New Resource Requests"));
+  d.appendChild(dynRows("newResourceRequests",[{key:"request",label:"Request",placeholder:"e.g., Senior Research Analyst"},{key:"amount",label:"Amount",placeholder:"$XX,XXX"},{key:"justification",label:"Justification",type:"textarea",placeholder:"Why is this needed?"},{key:"alignment",label:"Goal Alignment",type:"select",options:STRATEGIC_GOALS},{key:"priority",label:"Priority",type:"select",options:["High","Medium","Low"],default:"Medium"}],"Add Request"));
+  return d;
+}
+function renderSec5(){
+  const d=el("div");d.appendChild(mkSecHdr(5,"Special Projects & Software Budget","New Phase"));
+  d.appendChild(el("div","dyn-lbl","One-Time Software Needs"));d.appendChild(el("div","dyn-hint","e.g., Invoke Clarity, Tableau licenses, post-Cognos reporting tools"));
+  d.appendChild(dynRows("oneTimeSoftwareNeeds",[{key:"item",label:"Software / Tool",placeholder:"e.g., Invoke Clarity"},{key:"cost",label:"Estimated Cost",placeholder:"$XX,XXX"},{key:"benefit",label:"Benefit",type:"textarea",placeholder:"Describe expected benefit…"},{key:"sustainability",label:"Sustainability Strategy",placeholder:"How will this be maintained long-term?"}],"Add Software Need"));
+  const ta=document.createElement("textarea");ta.rows=3;ta.value=form.infrastructurePlanning;ta.placeholder="Describe infrastructure planning needs…";ta.oninput=()=>{form.infrastructurePlanning=ta.value;};
+  d.appendChild(mkField("Infrastructure Planning","Planning for new reporting tools, system migrations, post-Cognos, etc.",false,ta));
+  const ta2=document.createElement("textarea");ta2.rows=3;ta2.value=form.pilotInitiatives;ta2.placeholder="e.g., Departmental dashboard curation pilot…";ta2.oninput=()=>{form.pilotInitiatives=ta2.value;};
+  d.appendChild(mkField("Pilot Initiatives Requiring Investment",null,false,ta2));
+  return d;
+}
+function renderSec6(){
+  const d=el("div");d.appendChild(mkSecHdr(6,"Support for Colleges & District Accountability"));
+  d.appendChild(el("div","dyn-lbl","College Support Services"));d.appendChild(el("div","dyn-hint","Highlight how your department supports each college."));
+  d.appendChild(dynRows("collegeSupport",[{key:"serviceType",label:"Service Type",placeholder:"e.g., Research Support, Training"},{key:"description",label:"Description",type:"textarea",placeholder:"Describe the service…"},{key:"collegesServed",label:"Colleges Served",type:"multiselect",options:COLLEGES,default:[]},{key:"outcomes",label:"Outcomes",placeholder:"e.g., $X in grants secured, 9 staff trained"}],"Add Service"));
+  const ta=document.createElement("textarea");ta.rows=3;ta.value=form.transparencyStatement;ta.placeholder="Describe your accountability mechanisms…";ta.oninput=()=>{form.transparencyStatement=ta.value;};
+  d.appendChild(mkField("Transparency, Accuracy & Compliance Statement","How does your department ensure accountability in service delivery?",false,ta));
+  return d;
+}
+function renderSec7(){
+  const d=el("div");d.appendChild(mkSecHdr(7,"Conclusion & Forward Strategy"));
+  const ta=document.createElement("textarea");ta.rows=3;ta.value=form.visionStatement;ta.placeholder="e.g., 'Becoming a data-informed district through accessible, timely, and trusted research.'";ta.oninput=()=>{form.visionStatement=ta.value;};
+  d.appendChild(mkField("Strategic Vision Statement for the Year","The theme for the coming cycle — what you want to accomplish.",true,ta));
+  d.appendChild(el("div","dyn-lbl","Forward Goals Table"));
+  d.appendChild(dynRows("forwardGoals",[{key:"unit",label:"Goal / Activity",placeholder:"e.g., Expand Tableau training"},{key:"priority",label:"Linked Strategic Priority",type:"select",options:STRATEGIC_GOALS},{key:"focus",label:"Year-Specific Focus",placeholder:"e.g., 2025: Data coaching initiative"}],"Add Forward Goal"));
+  const ta2=document.createElement("textarea");ta2.rows=3;ta2.value=form.fiscalSummary;ta2.placeholder="Summarize how fiscal requests enable the vision…";ta2.oninput=()=>{form.fiscalSummary=ta2.value;};
+  d.appendChild(mkField("Summary of Fiscal Asks & Connection to Vision",null,false,ta2));
+  const ta3=document.createElement("textarea");ta3.rows=2;ta3.value=form.partnershipInvitation;ta3.placeholder="e.g., We invite college partners to engage with us on…";ta3.oninput=()=>{form.partnershipInvitation=ta3.value;};
+  d.appendChild(mkField("Invitation to Partner in Accountability with Colleges",null,false,ta3));
+  return d;
+}
+function renderFeedback(){
+  const d=el("div");d.appendChild(mkSecHdr("✉","Feedback & College Review"));
+  d.appendChild(mkCallout("blue","Space for colleges to respond. Department leaders will respond to feedback compiled at Chancellor's Cabinet."));
+  [["feedbackQuestions","Questions from Colleges","List any questions received…"],["feedbackClarifications","Clarifications","Note clarifications needed or provided…"],["feedbackConcerns","Concerns","Document any concerns raised…"]].forEach(([k,l,p])=>{const ta=document.createElement("textarea");ta.rows=3;ta.value=form[k];ta.placeholder=p;ta.oninput=()=>{form[k]=ta.value;};d.appendChild(mkField(l,null,false,ta));});
+  const outer=el("div","");outer.style.cssText="padding:14px 16px;background:#f8fafc;border-radius:12px;border:1.5px solid #e2e8f0";
+  const lbl=el("label","");lbl.style.cssText="display:flex;align-items:flex-start;gap:10px;cursor:pointer";
+  const cb=document.createElement("input");cb.type="checkbox";cb.style.marginTop="2px";cb.style.accentColor="#4f46e5";cb.checked=form.feedbackReviewed;
+  const inner=el("div");inner.appendChild(el("div","",`<span style="font-size:13px;font-weight:600;color:#334155">All feedback reviewed and responded to</span>`));
+  const dw=el("div");
+  if(form.feedbackReviewed){const di=document.createElement("input");di.type="date";di.value=form.feedbackReviewDate||"";di.style.cssText="margin-top:8px;width:180px";di.onchange=()=>{form.feedbackReviewDate=di.value;};dw.appendChild(di);}
+  cb.onchange=()=>{form.feedbackReviewed=cb.checked;dw.innerHTML="";if(cb.checked){const di=document.createElement("input");di.type="date";di.value=form.feedbackReviewDate||"";di.style.cssText="margin-top:8px;width:180px";di.onchange=()=>{form.feedbackReviewDate=di.value;};dw.appendChild(di);}};
+  inner.appendChild(dw);lbl.appendChild(cb);lbl.appendChild(inner);outer.appendChild(lbl);d.appendChild(outer);
+  return d;
+}
+function renderReview(){
+  const d=el("div");d.appendChild(mkSecHdr("✓","Review & Submit"));
+  if(!form.department||!form.submitterName){d.appendChild(mkCallout("red","<strong>Required:</strong> Please complete Department and Submitter Name on the Cover page before submitting."));}
+  [["Department",form.department],["Submitter",[form.submitterName,form.submitterTitle].filter(Boolean).join(" · ")],["Year",form.submissionYear],["Submission Type",form.yearType==="full"?"Full AUR (All 7 Sections)":"Abbreviated Update"],["Strategic Initiatives",form.strategicInitiatives.length?form.strategicInitiatives.join(", "):null],["Major Projects",form.majorProjects.filter(p=>p.title).length||null],["Strategic Goals",form.strategicGoalsRoadmap.filter(g=>g.goal).length||null],["New Requests",form.newResourceRequests.filter(r=>r.request).length||null],["Vision Statement",form.visionStatement?form.visionStatement.slice(0,80)+(form.visionStatement.length>80?"…":""):null]].forEach(([k,v])=>{const r=el("div","rv-row");r.appendChild(el("span","rv-k",k));r.appendChild(el("span","rv-v",v!=null?String(v):'<span class="rv-empty">Not provided</span>'));d.appendChild(r);});
+  d.appendChild(mkCallout("blue","By submitting, this AUR will be saved to your SharePoint <strong>AUR Submissions</strong> list and compiled for review at Chancellor's Cabinet."));
+  return d;
+}
+function render(){
+  const card=document.getElementById("card");card.innerHTML="";
+  const isLast=step===MAX_STEP;const isFeedback=step===MAX_STEP-1;
+  let content;
+  if(step===0)content=renderCover();
+  else if(step<=ACTIVE_SECS.length){const sec=ACTIVE_SECS[step-1];if(sec===1)content=renderSec1();else if(sec===2)content=renderSec2();else if(sec===3)content=renderSec3();else if(sec===4||sec==="4B")content=renderSec4();else if(sec===5)content=renderSec5();else if(sec===6)content=renderSec6();else if(sec===7)content=renderSec7();}
+  else if(isFeedback)content=renderFeedback();
+  else content=renderReview();
+  card.appendChild(content);
+  document.getElementById("step-lbl").textContent=STEP_LABELS[step]||"";
+  document.getElementById("step-ctr").textContent=`Step ${step+1} of ${STEP_LABELS.length}`;
+  const dots=document.getElementById("nav-dots");dots.innerHTML="";
+  STEP_LABELS.forEach((_,i)=>{const b=document.createElement("button");b.className="ndot"+(i===step?" active":(i<step?" done":""));b.title=STEP_LABELS[i];b.onclick=()=>{step=i;render();};dots.appendChild(b);});
+  const back=document.getElementById("btn-back");const next=document.getElementById("btn-next");
+  back.disabled=step===0;
+  if(isLast){next.textContent="Submit AUR ✓";next.className="btn btn-sub";next.disabled=!form.department||!form.submitterName;next.onclick=handleSubmit;}
+  else{next.textContent="Continue →";next.className="btn btn-next";next.disabled=false;next.onclick=nextStep;}
+  document.getElementById("err-box").innerHTML="";
+}
+function nextStep(){if(step<MAX_STEP){step++;render();window.scrollTo(0,0);}}
+function prevStep(){if(step>0){step--;render();window.scrollTo(0,0);}}
+function restart(){form=initForm();step=0;document.getElementById("success").style.display="none";document.getElementById("app-wrap").style.display="block";render();}
+async function handleSubmit(){
+  const btn=document.getElementById("btn-next");
+  btn.innerHTML='<span class="spin"></span>Saving…';btn.disabled=true;
+  document.getElementById("err-box").innerHTML="";
+  try{
+    const dr=await fetch(`${SP_SITE}/_api/contextinfo`,{method:"POST",headers:{"Accept":"application/json;odata=verbose","Content-Type":"application/json;odata=verbose"},credentials:"include"});
+    if(!dr.ok)throw new Error("Could not connect to SharePoint. Please make sure you are logged in to Microsoft 365 in this browser.");
+    const dd=await dr.json();
+    const digest=dd.d.GetContextWebInformation.FormDigestValue;
+    const payload={__metadata:{type:"SP.Data.AUR_x0020_SubmissionsListItem"},Title:`${form.department} – AUR ${form.submissionYear}`,Department:form.department,SubmitterName:form.submitterName,SubmitterTitle:form.submitterTitle,SubmissionYear:Number(form.submissionYear),YearType:form.yearType,ExecutiveSummary:form.executiveSummary,StrategicInitiatives:form.strategicInitiatives.join("; "),PastInvestmentImpact:form.pastInvestmentImpact,MajorProjects:JSON.stringify(form.majorProjects),ServiceEnhancements:form.serviceEnhancements,CaseExamples:form.caseExamples,KPIs:JSON.stringify(form.kpis),StrategicGoalsRoadmap:JSON.stringify(form.strategicGoalsRoadmap),StaffingOverview:form.currentStaffingOverview,GapAnalysis:form.gapAnalysis,GrowthPlan:form.growthPlan,ImpactsIfUnmet:form.impactsIfUnmet,OngoingCommitments:JSON.stringify(form.ongoingCommitments),NewResourceRequests:JSON.stringify(form.newResourceRequests),SoftwareNeeds:JSON.stringify(form.oneTimeSoftwareNeeds),InfrastructurePlanning:form.infrastructurePlanning,PilotInitiatives:form.pilotInitiatives,CollegeSupport:JSON.stringify(form.collegeSupport),TransparencyStatement:form.transparencyStatement,VisionStatement:form.visionStatement,FiscalSummary:form.fiscalSummary,PartnershipInvitation:form.partnershipInvitation,ForwardGoals:JSON.stringify(form.forwardGoals),FeedbackQuestions:form.feedbackQuestions,FeedbackClarifications:form.feedbackClarifications,FeedbackConcerns:form.feedbackConcerns,FeedbackReviewed:form.feedbackReviewed,FeedbackReviewDate:form.feedbackReviewDate||null,Status:"Submitted"};
+    const resp=await fetch(`${SP_SITE}/_api/web/lists/getbytitle('${SP_LIST}')/items`,{method:"POST",headers:{"Accept":"application/json;odata=verbose","Content-Type":"application/json;odata=verbose","X-RequestDigest":digest},credentials:"include",body:JSON.stringify(payload)});
+    if(!resp.ok){const err=await resp.json().catch(()=>({}));throw new Error(err?.error?.message?.value||`SharePoint error ${resp.status}. Make sure all columns exist in your AUR Submissions list.`);}
+    document.getElementById("app-wrap").style.display="none";
+    const s=document.getElementById("success");s.style.display="flex";
+    document.getElementById("succ-dept").textContent=form.department;
+    document.getElementById("succ-sub").textContent=`${form.submitterName} · ${form.submissionYear}`;
+    document.getElementById("succ-tag").innerHTML=`<span style="background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">${form.yearType==="full"?"Full AUR – All 7 Sections":"Abbreviated Update"}</span>`;
+  }catch(e){
+    document.getElementById("err-box").innerHTML=`<div class="callout red" style="margin-top:12px"><strong>Error:</strong> ${e.message}</div>`;
+    btn.innerHTML="Submit AUR ✓";btn.className="btn btn-sub";btn.disabled=false;btn.onclick=handleSubmit;
+  }
+}
+render();
 </script>
 </body>
 </html>
- 
