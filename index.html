@@ -140,7 +140,7 @@ const YEAR=new Date().getFullYear();
 const YEAR_TYPE=YEAR%2===1?"full":"abbreviated";
 const ACTIVE_SECS=YEAR_TYPE==="full"?[1,2,3,4,5,6,7]:[1,2,3,"4B",7];
 const SEC_LABELS={1:"Executive Summary",2:"Accomplishments & Impact",3:"Strategic Goals 2025–2027",4:"Staffing & Fiscal Plan","4B":"Staffing & Fiscal Plan",5:"Special Projects & Software",6:"Support for Colleges",7:"Conclusion & Strategy"};
-const STEP_LABELS=["Cover",...ACTIVE_SECS.map(s=>SEC_LABELS[s]),"Feedback","Review & Submit"];
+const STEP_LABELS=["Cover",...ACTIVE_SECS.map(s=>SEC_LABELS[s]),"Review & Submit"];
 const MAX_STEP=STEP_LABELS.length-1;
 let step=0;
 let form=initForm();
@@ -296,11 +296,10 @@ function renderReview(){
 }
 function render(){
   const card=document.getElementById("card");card.innerHTML="";
-  const isLast=step===MAX_STEP;const isFeedback=step===MAX_STEP-1;
+  const isLast=step===MAX_STEP;
   let content;
   if(step===0)content=renderCover();
   else if(step<=ACTIVE_SECS.length){const sec=ACTIVE_SECS[step-1];if(sec===1)content=renderSec1();else if(sec===2)content=renderSec2();else if(sec===3)content=renderSec3();else if(sec===4||sec==="4B")content=renderSec4();else if(sec===5)content=renderSec5();else if(sec===6)content=renderSec6();else if(sec===7)content=renderSec7();}
-  else if(isFeedback)content=renderFeedback();
   else content=renderReview();
   card.appendChild(content);
   document.getElementById("step-lbl").textContent=STEP_LABELS[step]||"";
